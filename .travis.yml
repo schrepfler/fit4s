@@ -1,5 +1,5 @@
 before_install:
-  - openssl aes-256-cbc -K $encrypted_e4f011a99370_key -iv $encrypted_e4f011a99370_iv -in fit.jar.enc -out fit.jar -d
+  - openssl aes-256-cbc -K $encrypted_e4f011a99370_key -iv $encrypted_e4f011a99370_iv -in ./lib/fit.jar.enc -out ./lib/fit.jar -d
 
 language: scala
 

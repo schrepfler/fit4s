@@ -15,7 +15,7 @@
  */
 
 package kimeru.fit4s
-import java.io.PrintWriter
+import java.io._
 import java.nio.file.{ NoSuchFileException, _ }
 
 import caseapp._
@@ -38,34 +38,53 @@ object Application extends CaseApp[Options] {
     if (options.incompleteStream) decode.incompleteStream()
 
     arg.remaining.foreach(
-      convertFitToCSV
+      extractFitFileDataToCsv
     )
 
   }
 
-  def convertFitToCSV(file: String): Unit = {
+  private def setupMesgBroadcaster(decode: Decode, fitListener: FitListener): MesgBroadcaster = {
+    val mesgBroadcaster = new MesgBroadcaster(decode)
+    mesgBroadcaster.addListener(fitListener.asInstanceOf[FileIdMesgListener])
+    mesgBroadcaster.addListener(fitListener.asInstanceOf[UserProfileMesgListener])
+    mesgBroadcaster.addListener(fitListener.asInstanceOf[DeviceInfoMesgListener])
+    mesgBroadcaster.addListener(fitListener.asInstanceOf[MonitoringMesgListener])
+    mesgBroadcaster.addListener(fitListener.asInstanceOf[RecordMesgListener])
+    mesgBroadcaster
+  }
+
+
+
+  def extractFitByteArrayDataToCsvByteArray(inputFit: Array[Byte]): Array[Byte] = {
+    // allocate buffers
+    val bis         = new ByteArrayInputStream(inputFit)
+    val baos        = new ByteArrayOutputStream()
+    val printWriter = new PrintWriter(baos)
+    // run conversion
+    runConversion(bis, printWriter)
+    // closing resources
+    baos.flush()
+    baos.close()
+    bis.close()
+    baos.toByteArray
+  }
+
+  def extractFitFileDataToCsv(file: String): Unit = {
     val fitFilePath = Paths.get(file)
     val cvsFilePath = Paths.get(determineCsvFileName(file))
 
     try {
-      val fis                      = Files.newInputStream(fitFilePath, fitFileOptions)
-      val printWriter              = new PrintWriter(Files.newOutputStream(cvsFilePath, csvFileOptions))
-      val fitListener: FitListener = new FitListener(printWriter)
+      // allocate file handles
+      val fis: InputStream = Files.newInputStream(fitFilePath, fitFileOptions)
+      val printWriter: PrintWriter = new PrintWriter(Files.newOutputStream(cvsFilePath, csvFileOptions))
+      // run conversion
+      runConversion(fis, printWriter)
 
-      val mesgBroadcaster = new MesgBroadcaster(decode)
-      mesgBroadcaster.addListener(fitListener.asInstanceOf[FileIdMesgListener])
-      mesgBroadcaster.addListener(fitListener.asInstanceOf[UserProfileMesgListener])
-      mesgBroadcaster.addListener(fitListener.asInstanceOf[DeviceInfoMesgListener])
-      mesgBroadcaster.addListener(fitListener.asInstanceOf[MonitoringMesgListener])
-      mesgBroadcaster.addListener(fitListener.asInstanceOf[RecordMesgListener])
 
-      printWriter.println(
-        "secs,cad,hr,km,kph,nm,watts,alt,lon,lat,headwind,slope,temp,interval,lrbalance,lte,rte,lps,rps,smo2,thb,o2hb,hhb"
-      )
-      decode.addListener(fitListener)
-      decode.read(fis, mesgBroadcaster, mesgBroadcaster)
+      // closing resources
       printWriter.flush()
       printWriter.close()
+      fis.close()
     } catch {
       case err: NoSuchFileException => {
         System.err.println(s"File ${err.getLocalizedMessage} not found.")
@@ -74,6 +93,19 @@ object Application extends CaseApp[Options] {
     }
   }
 
+  private def runConversion(is: InputStream, printWriter: PrintWriter, includeHeader: Boolean = true) = {
+    val fitListener: FitListener = new FitListener(printWriter)
+    val broadcaster              = setupMesgBroadcaster(decode, fitListener)
+    decode.addListener(fitListener)
+
+    if(includeHeader){
+      printWriter.println(
+        "secs,cad,hr,km,kph,nm,watts,alt,lon,lat,headwind,slope,temp,interval,lrbalance,lte,rte,lps,rps,smo2,thb,o2hb,hhb"
+      )
+    }
+
+    decode.read(is, broadcaster, broadcaster)
+  }
   def determineCsvFileName(path: String): String = {
     var fileName = path
     val pos      = fileName.lastIndexOf('.')

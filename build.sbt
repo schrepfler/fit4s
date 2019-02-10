@@ -7,7 +7,7 @@ lazy val fit4s =
     .in(file("."))
     .enablePlugins(AutomateHeaderPlugin)
     .enablePlugins(JavaAppPackaging)
-  .settings(settings)
+    .settings(settings)
     .settings(
       libraryDependencies ++= Seq(
         library.caseApp,

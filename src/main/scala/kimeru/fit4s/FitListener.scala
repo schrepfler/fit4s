@@ -51,10 +51,10 @@ class FitListener(printWriter: PrintWriter)
     printWriter.println(
       s"${second},${recordMesg.getCadence},${recordMesg.getHeartRate}," +
       s"${distance},${speed},,${recordMesg.getPower},${recordMesg.getAltitude},${degrees(recordMesg.getPositionLong)}," +
-      s"${degrees(recordMesg.getPositionLat)},,,${recordMesg.getTemperature},," +
-      s"${recordMesg.getLeftRightBalance},${recordMesg.getLeftTorqueEffectiveness}," +
-      s"${recordMesg.getRightTorqueEffectiveness},${recordMesg.getLeftPedalSmoothness}," +
-      s"${recordMesg.getRightPedalSmoothness},${recordMesg.getCombinedPedalSmoothness},${recordMesg.getTotalHemoglobinConc},,"
+      s"${degrees(recordMesg.getPositionLat)},0,0,0,0," +
+      s"0,0," +
+      s"0,0," +
+      s"0,0,0,0,0"
     )
     second += 1
   }

@@ -1,3 +1,4 @@
+import sbt.Keys.crossScalaVersions
 // *****************************************************************************
 // Projects
 // *****************************************************************************
@@ -47,6 +48,8 @@ lazy val commonSettings =
     organization := "io.kimeru",
     organizationName := "Kimeru",
     maintainer := "Srdan Srepfler",
+    version := "0.1",
+    crossScalaVersions := Seq("2.11.11", "2.12.8"),
     startYear := Some(2019),
     licenses += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0")),
     scalacOptions ++= Seq(

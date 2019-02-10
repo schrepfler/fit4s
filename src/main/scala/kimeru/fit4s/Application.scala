@@ -16,7 +16,7 @@
 
 package kimeru.fit4s
 import java.io.PrintWriter
-import java.nio.file.{NoSuchFileException, _}
+import java.nio.file.{ NoSuchFileException, _ }
 
 import caseapp._
 import com.garmin.fit._
@@ -28,7 +28,7 @@ case class Options(
 
 object Application extends CaseApp[Options] {
 
-  val decode                  = new Decode
+  val decode                     = new Decode
   val fitFileOptions: OpenOption = StandardOpenOption.READ
   val csvFileOptions: OpenOption = StandardOpenOption.CREATE
 
@@ -48,8 +48,8 @@ object Application extends CaseApp[Options] {
     val cvsFilePath = Paths.get(determineCsvFileName(file))
 
     try {
-      val fis = Files.newInputStream(fitFilePath, fitFileOptions)
-      val printWriter = new PrintWriter(Files.newOutputStream(cvsFilePath, csvFileOptions))
+      val fis                      = Files.newInputStream(fitFilePath, fitFileOptions)
+      val printWriter              = new PrintWriter(Files.newOutputStream(cvsFilePath, csvFileOptions))
       val fitListener: FitListener = new FitListener(printWriter)
 
       val mesgBroadcaster = new MesgBroadcaster(decode)
@@ -74,9 +74,9 @@ object Application extends CaseApp[Options] {
     }
   }
 
-  def determineCsvFileName(path: String): String ={
+  def determineCsvFileName(path: String): String = {
     var fileName = path
-    val pos = fileName.lastIndexOf('.')
+    val pos      = fileName.lastIndexOf('.')
     if (pos > 0) {
       fileName = fileName.substring(0, pos) ++ ".csv"
     } else {

@@ -49,8 +49,8 @@ class FitListener(printWriter: PrintWriter)
     // unknown: nm, headwind, slope, interval, o2hb, hhb
 
     printWriter.println(
-      s"${second},${recordMesg.getCadence},${recordMesg.getHeartRate}," +
-      s"${distance},${speed},,${recordMesg.getPower},${recordMesg.getAltitude},${degrees(recordMesg.getPositionLong)}," +
+      s"$second,${recordMesg.getCadence},${recordMesg.getHeartRate}," +
+      s"$distance,$speed,0,${recordMesg.getPower},${recordMesg.getAltitude},${degrees(recordMesg.getPositionLong)}," +
       s"${degrees(recordMesg.getPositionLat)},0,0,0,0," +
       s"0,0," +
       s"0,0," +
@@ -62,6 +62,6 @@ class FitListener(printWriter: PrintWriter)
 //    println(s"developerFieldDescription $developerFieldDescription")
   }
 
-  def degrees(semicircles: Int) =
+  def degrees(semicircles: Int): Float =
     semicircles / 11930464.71f
 }

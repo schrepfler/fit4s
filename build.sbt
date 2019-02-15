@@ -13,7 +13,7 @@ lazy val fit4s =
       libraryDependencies ++= Seq(
         library.caseApp,
         library.scalaCheck % Test,
-        library.scalaTest  % Test,
+        library.scalaTest  % Test
       )
     )
 
@@ -60,14 +60,14 @@ lazy val commonSettings =
       "-encoding",
       "UTF-8",
       "-Ypartial-unification",
-      "-Ywarn-unused-import",
+      "-Ywarn-unused-import"
     ),
     Compile / unmanagedSourceDirectories := Seq((Compile / scalaSource).value),
     Test / unmanagedSourceDirectories := Seq((Test / scalaSource).value),
-    Compile / compile / wartremoverWarnings ++= Warts.unsafe,
+    Compile / compile / wartremoverWarnings ++= Warts.unsafe
   )
 
 lazy val scalafmtSettings =
   Seq(
-    scalafmtOnCompile := true,
+    scalafmtOnCompile := true
   )

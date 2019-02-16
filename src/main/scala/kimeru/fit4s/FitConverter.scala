@@ -15,7 +15,7 @@
  */
 
 package kimeru.fit4s
-import java.io.{ ByteArrayInputStream, ByteArrayOutputStream, InputStream, PrintWriter }
+import java.io._
 import java.nio.file._
 
 import com.garmin.fit._
@@ -39,15 +39,15 @@ class FitConverter(skipHeader: Boolean = false, incompleteStream: Boolean = fals
   }
 
   private def runConversion(is: InputStream,
-                            printWriter: PrintWriter,
+                            bufferedWriter: BufferedWriter,
                             includeHeader: Boolean = true) = {
-    val fitListener: FitListener = new FitListener(printWriter)
+    val fitListener: FitListener = new FitListener(bufferedWriter)
     val broadcaster              = setupMesgBroadcaster(decode, fitListener)
     decode.addListener(fitListener)
 
     if (includeHeader) {
-      printWriter.println(
-        "secs,cad,hr,km,kph,nm,watts,alt,lon,lat,headwind,slope,temp,interval,lrbalance,lte,rte,lps,rps,smo2,thb,o2hb,hhb"
+      bufferedWriter.write(
+        "secs,cad,hr,km,kph,nm,watts,alt,lon,lat,headwind,slope,temp,interval,lrbalance,lte,rte,lps,rps,smo2,thb,o2hb,hhb\n"
       )
     }
 
@@ -56,14 +56,14 @@ class FitConverter(skipHeader: Boolean = false, incompleteStream: Boolean = fals
 
   def FitToCsvByteArrayIO(inputFit: Array[Byte]): Array[Byte] = {
     // allocate buffers
-    val bis         = new ByteArrayInputStream(inputFit)
-    val baos        = new ByteArrayOutputStream()
-    val printWriter = new PrintWriter(baos)
+    val bis            = new ByteArrayInputStream(inputFit)
+    val baos           = new ByteArrayOutputStream()
+    val bufferedWriter = new BufferedWriter(new OutputStreamWriter(baos))
+
     // run conversion
-    runConversion(bis, printWriter)
+    runConversion(bis, bufferedWriter)
     // closing resources
-    baos.flush()
-    baos.close()
+    bufferedWriter.flush()
     bis.close()
     baos.toByteArray
   }

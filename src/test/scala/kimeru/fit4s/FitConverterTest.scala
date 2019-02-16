@@ -24,9 +24,9 @@ import org.scalatest.{ BeforeAndAfterEach, FunSuite }
 
 class FitConverterTest extends FunSuite with BeforeAndAfterEach {
 
-  val fitConverter = new FitConverter()
-  val inputFile    = "2018_10_09_15_24_50.fit"
-  val outputFile   = fitConverter.autoCsvFileName(inputFile)
+  val inputFile            = "2018_10_09_15_24_50.fit"
+  private val fitConverter = new FitConverter()
+  val outputFile           = fitConverter.autoCsvFileName(inputFile)
 
   override def beforeEach() {}
   override def afterEach(): Unit =
@@ -133,8 +133,6 @@ class FitConverterTest extends FunSuite with BeforeAndAfterEach {
     val outputBytes        = fitConverter.FitToCsvByteArrayIO(input)
 
     val outputString = outputBytes.map(_.toChar).mkString
-
-//    print(outputString)
 
     assert(
       outputString.contains("6269,65,121")

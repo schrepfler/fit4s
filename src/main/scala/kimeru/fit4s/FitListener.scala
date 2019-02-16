@@ -15,12 +15,12 @@
  */
 
 package kimeru.fit4s
-import java.io.PrintWriter
+import java.io.BufferedWriter
 import java.text.DecimalFormat
 
 import com.garmin.fit._
 
-class FitListener(printWriter: PrintWriter)
+class FitListener(bufferedWriter: BufferedWriter)
     extends FileIdMesgListener
     with UserProfileMesgListener
     with DeviceInfoMesgListener
@@ -48,13 +48,13 @@ class FitListener(printWriter: PrintWriter)
 
     // unknown: nm, headwind, slope, interval, o2hb, hhb
 
-    printWriter.println(
-      s"${second},${recordMesg.getCadence},${recordMesg.getHeartRate}," +
-      s"${distance},${speed},,${recordMesg.getPower},${recordMesg.getAltitude},${degrees(recordMesg.getPositionLong)}," +
+    bufferedWriter.write(
+      s"$second,${recordMesg.getCadence},${recordMesg.getHeartRate}," +
+      s"$distance,$speed,0,${recordMesg.getPower},${recordMesg.getAltitude},${degrees(recordMesg.getPositionLong)}," +
       s"${degrees(recordMesg.getPositionLat)},0,0,0,0," +
       s"0,0," +
       s"0,0," +
-      s"0,0,0,0,0"
+      s"0,0,0,0,0\n"
     )
     second += 1
   }
@@ -62,6 +62,6 @@ class FitListener(printWriter: PrintWriter)
 //    println(s"developerFieldDescription $developerFieldDescription")
   }
 
-  def degrees(semicircles: Int) =
+  def degrees(semicircles: Int): Float =
     semicircles / 11930464.71f
 }
